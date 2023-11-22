@@ -1,0 +1,5 @@
+local quickStrike = {}
+
+
+
+return quickStrike
