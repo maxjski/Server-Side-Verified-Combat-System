@@ -33,12 +33,12 @@ ZombieAI.new = function(model)
 		end
 	end
 
-	loadConfig("AttackRange", 3)
+	loadConfig("AttackRange", 1)
 	loadConfig("FieldOfView", 180)
 	loadConfig("AggroRange", 200)
 	loadConfig("ChanceOfBoredom", .5)
 	loadConfig("BoredomDuration", 10)
-	loadConfig("Damage", 10)
+	loadConfig("Damage", 5)
 	loadConfig("DamageCooldown", 1)
 	
 	local StateMachine = require(game.ServerStorage.ROBLOX_StateMachine).new()

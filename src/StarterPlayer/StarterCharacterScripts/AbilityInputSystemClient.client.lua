@@ -3,10 +3,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
-local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-local animator = humanoid:WaitForChild("Animator")
-
 local ValidateAbilityAction = ReplicatedStorage.NetworkCommunication.RemoteFunctions:WaitForChild("ValidateAbilityAction")
 
 local attackAbilities = ReplicatedStorage.CombatSystem.AttackAbilities
@@ -21,29 +17,10 @@ local guardModule = require(utilityAbilities:WaitForChild("Guard"))
 local keyToAbility = {
 	[Enum.UserInputType.MouseButton1] = PunchModule,
 	[Enum.KeyCode.Q] = QuickStrikeModule,
-	[Enum.KeyCode.W] = dashModule,
-	[Enum.KeyCode.A] = dashModule,
-	[Enum.KeyCode.D] = dashModule,
+	[Enum.KeyCode.LeftControl] = dashModule,
 	[Enum.KeyCode.F] = guardModule,
-	[Enum.KeyCode.LeftControl] = ceAccelerationModule,
+	[Enum.KeyCode.C] = ceAccelerationModule,
 }
-
-local doublePressTimeWindow = 0.25
-local lastKeyPressTime = {}
-
-local function isDoublePress(keyCode)
-	local currentTime = tick()
-	if not lastKeyPressTime[keyCode] then
-		lastKeyPressTime[keyCode] = currentTime
-		return false
-	end
-
-	local timeSinceLastPress = currentTime - lastKeyPressTime[keyCode]
-	lastKeyPressTime[keyCode] = currentTime
-
-	return timeSinceLastPress <= doublePressTimeWindow
-end
-
 
 local function onInputBegan(input, gameProcessed)
 	if gameProcessed then return end
@@ -51,17 +28,7 @@ local function onInputBegan(input, gameProcessed)
 	local abilityModule = keyToAbility[input.KeyCode] or keyToAbility[input.UserInputType]
 	if not abilityModule or not abilityModule.usable(LocalPlayer) then return end
 	
-	if not abilityModule.doublePress then
-		if ValidateAbilityAction:InvokeServer(abilityModule.id) then
-			return
-		end
-		return
-	end
-	
-	if isDoublePress(input.KeyCode) then
-		if ValidateAbilityAction:InvokeServer(abilityModule.id) then
-			return
-		end
+	if ValidateAbilityAction:InvokeServer(abilityModule.id) then
 		return
 	end
 end

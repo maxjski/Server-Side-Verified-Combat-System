@@ -28,9 +28,7 @@ function CEAccelerationModule.usable(player)
 end
 
 function CEAccelerationModule.execute(player)
-	if not player  then
-		print("ERROR: player empty")
-		return	end
+	if not player  then	return end
 	
 	local humanoid = player.Character:WaitForChild("Humanoid")
 	local animator = humanoid:WaitForChild("Animator")
@@ -42,8 +40,6 @@ function CEAccelerationModule.execute(player)
 	
 	humanoid.WalkSpeed = 0
 	humanoid.JumpHeight = 0
-	
-	local animator
 
 	wait(0.5)
 
