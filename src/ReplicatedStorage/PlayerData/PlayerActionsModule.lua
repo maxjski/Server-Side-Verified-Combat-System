@@ -2,14 +2,6 @@ local PlayerActionsModule = {}
 
 local playersData = {}
 
-local abilityCooldowns = {
-	dash = 0,5,
-	ceacceleration = 1,
-	guard = 0,
-	punch = 0.5,
-	quickstrike = 5,
-}
-
 local function initializePlayerData(player)
 	if not playersData[player.UserId] then
 		playersData[player.UserId] = {
