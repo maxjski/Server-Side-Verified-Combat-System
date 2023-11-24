@@ -21,7 +21,21 @@ function guardModule.usable(player)
 	return true
 end
 
+function guardModule.stopable(player)
+	return true
+end
+
 function guardModule.execute(player)
+	local humanoid = player.Character:WaitForChild("Humanoid")
+	
+	humanoid.WalkSpeed = 0
+	humanoid.JumpHeight = 0
+	
+	humanoid.WalkSpeed = 16
+	humanoid.JumpHeight = 7.2
+end
+
+function guardModule.stop(player)
 	local humanoid = player.Character:WaitForChild("Humanoid")
 	
 	humanoid.WalkSpeed = 0
