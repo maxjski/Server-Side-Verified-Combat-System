@@ -1,6 +1,8 @@
 local guardModule = {}
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local PlayerStatisticsModule = require(ReplicatedStorage.PlayerData.PlayerStatistics)
+local PlayerActionsModule = require(ReplicatedStorage.PlayerData.PlayerActionsModule)
 local animationIds = require(ReplicatedStorage.PlayerData.AnimationIDs)
 
 guardModule["id"] = "guard"
@@ -30,19 +32,22 @@ function guardModule.execute(player)
 	
 	humanoid.WalkSpeed = 0
 	humanoid.JumpHeight = 0
-	
-	humanoid.WalkSpeed = 16
-	humanoid.JumpHeight = 7.2
+
+	PlayerStatisticsModule.SetPlayerState(player, "defensive", 0.9)
 end
 
 function guardModule.stop(player)
 	local humanoid = player.Character:WaitForChild("Humanoid")
-	
-	humanoid.WalkSpeed = 0
-	humanoid.JumpHeight = 0
-	
-	humanoid.WalkSpeed = 16
-	humanoid.JumpHeight = 7.2
+
+	if PlayerActionsModule.GetPlayerState(player, "inSprint") then
+		humanoid.WalkSpeed = 30 + PlayerStatisticsModule.GetPlayerState(player, "speed")
+		humanoid.JumpHeight = 20 + PlayerStatisticsModule.GetPlayerState(player, "speed")
+	else 
+		humanoid.WalkSpeed = 10 + (PlayerStatisticsModule.GetPlayerState(player, "speed")/2)
+		humanoid.JumpHeight = 10 + PlayerStatisticsModule.GetPlayerState(player, "speed")
+	end
+
+	PlayerStatisticsModule.SetPlayerState(player, "defensive", 0)
 end
 
 return guardModule

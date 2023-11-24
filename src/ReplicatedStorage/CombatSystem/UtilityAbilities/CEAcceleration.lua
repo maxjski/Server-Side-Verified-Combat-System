@@ -43,13 +43,10 @@ function CEAccelerationModule.execute(player)
 
 	wait(0.5)
 
-	PlayerActionsModule.TogglePlayerState(player, "inPowerMode")
-	local isSprinting = PlayerActionsModule.GetPlayerState(player, "inPowerMode")
+	PlayerActionsModule.TogglePlayerState(player, "inSprint")
+	local isSprinting = PlayerActionsModule.GetPlayerState(player, "inSprint")
 	
-	print(isSprinting)
-	print("SPEED")
-	print(getSpeedAndJump(player, isSprinting))
-	
+	print("isSprinting: ", isSprinting)
 	humanoid.WalkSpeed, humanoid.JumpHeight = getSpeedAndJump(player, isSprinting)
 end
 
