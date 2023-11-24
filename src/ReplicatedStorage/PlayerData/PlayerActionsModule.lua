@@ -5,8 +5,12 @@ local playersData = {}
 local function initializePlayerData(player)
 	if not playersData[player.UserId] then
 		playersData[player.UserId] = {
-			inPowerMode = false,
-			inAction = false,
+			playerStates = {
+				inAction = false,
+				recovering = false,
+				critRecovering = false,
+				stunned = false,
+			},
 			cooldowns = {}
 		}
 	end
