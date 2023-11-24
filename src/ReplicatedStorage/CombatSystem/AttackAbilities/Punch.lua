@@ -18,8 +18,12 @@ PunchModule["energyCost"] = 10
 PunchModule["cooldown"] = 0.3
 PunchModule["punchCounter"] = 1
 PunchModule["animationTracks"] = nil
-	
-local function loadAnimations(player)
+
+local function getDmg(player)
+	return 20 + PlayerStatisticsModule.GetPlayerState(player, "strength")
+end	
+
+function PunchModule.loadAnimations(player)
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid = character:WaitForChild("Humanoid")
 	local animator = humanoid:WaitForChild("Animator")
@@ -34,8 +38,19 @@ local function loadAnimations(player)
 	end
 end
 
-local function getDmg(player)
-	return 20 + PlayerStatisticsModule.GetPlayerState(player, "strength")
+function PunchModule.playAnimation(player)
+	if not PunchModule["animationTracks"]  then
+		PunchModule.loadAnimations(player)
+	end
+	
+	local animationTrack = PunchModule["animationTracks"][PunchModule["punchCounter"]]
+	animationTrack:Play()
+	
+	if PunchModule["punchCounter"] < 4  then
+		PunchModule["punchCounter"] += 1
+	else
+		PunchModule["punchCounter"] = 1
+	end
 end
 
 function PunchModule.usable(player)
@@ -79,20 +94,8 @@ end
 
 function PunchModule.execute(player)
 	if not player then return end
-	if not PunchModule["animationTracks"]  then
-		loadAnimations(player)
-	end
-	
+
 	PlayerActionsModule.SetPlayerState(player, "inAction", true)
-	
-	local animationTrack = PunchModule["animationTracks"][PunchModule["punchCounter"]]
-	animationTrack:Play()
-	
-	if PunchModule["punchCounter"] < 4  then
-		PunchModule["punchCounter"] += 1
-	else
-		PunchModule["punchCounter"] = 1
-	end
 	
 	local hitHumanoid = PunchModule.getHitHumanoid(player)
 	

@@ -29,12 +29,20 @@ local keyToStopAbility = {
 	[Enum.KeyCode.F] = guardModule,
 }
 
+for _, abilityModule in pairs(keyToAbility) do
+	if abilityModule.loadAnimations then
+		abilityModule.loadAnimations(LocalPlayer)
+	end
+end
+
 local function onInputBegan(input, gameProcessed)
 	if gameProcessed then return end
 
 	local abilityModule = keyToAbility[input.KeyCode] or keyToAbility[input.UserInputType]
 	if not abilityModule or not abilityModule.usable(LocalPlayer) then return end
 	
+	abilityModule.playAnimation(LocalPlayer)
+
 	if ValidateAbilityAction:InvokeServer(abilityModule.id) then
 		return
 	end
@@ -45,7 +53,7 @@ local function onInputEnded(input, gameProcessed)
 
 	local abilityModule = keyToStopAbility[input.KeyCode] or keyToStopAbility[input.UserInputType]
 	if not abilityModule or not abilityModule.usable(LocalPlayer) then return end
-	
+
 	if ValidateStopAbilityAction:InvokeServer(abilityModule.id) then
 		return
 	end
