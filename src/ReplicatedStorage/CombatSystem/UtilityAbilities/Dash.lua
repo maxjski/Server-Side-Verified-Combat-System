@@ -14,6 +14,16 @@ dashModule["animationIds"] = {
 dashModule["energyCost"] = 10
 dashModule["cooldown"] = 0.5
 
+function dashModule.playAnimation(player)
+    local humanoid = player.Character:WaitForChild("Humanoid")
+    local animator = humanoid:WaitForChild("Animator")
+    
+    local abilityAnimation = Instance.new("Animation")
+    abilityAnimation.AnimationId = dashModule.animationId
+    local animationTrack = animator:LoadAnimation(abilityAnimation)
+    animationTrack:Play()
+end
+
 function dashModule.usable(player)
 	if PlayerActionsModule.IsCooldownComplete(player, dashModule.id) then
 		PlayerActionsModule.StartCooldown(player, dashModule.id, dashModule.cooldown)

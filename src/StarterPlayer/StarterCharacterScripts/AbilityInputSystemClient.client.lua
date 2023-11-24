@@ -41,7 +41,9 @@ local function onInputBegan(input, gameProcessed)
 	local abilityModule = keyToAbility[input.KeyCode] or keyToAbility[input.UserInputType]
 	if not abilityModule or not abilityModule.usable(LocalPlayer) then return end
 	
-	abilityModule.playAnimation(LocalPlayer)
+	if abilityModule.playAnimation then
+		abilityModule.playAnimation(LocalPlayer)
+	end
 
 	if ValidateAbilityAction:InvokeServer(abilityModule.id) then
 		return
