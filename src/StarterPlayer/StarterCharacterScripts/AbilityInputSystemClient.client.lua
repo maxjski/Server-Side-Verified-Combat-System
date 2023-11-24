@@ -56,6 +56,10 @@ local function onInputEnded(input, gameProcessed)
 	local abilityModule = keyToStopAbility[input.KeyCode] or keyToStopAbility[input.UserInputType]
 	if not abilityModule or not abilityModule.usable(LocalPlayer) then return end
 
+	if abilityModule.stopAnimation then
+		abilityModule.stopAnimation(LocalPlayer)
+	end
+
 	if ValidateStopAbilityAction:InvokeServer(abilityModule.id) then
 		return
 	end

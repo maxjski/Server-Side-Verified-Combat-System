@@ -8,15 +8,34 @@ local animationIds = require(ReplicatedStorage.PlayerData.AnimationIDs)
 guardModule["id"] = "guard"
 guardModule["animationId"] = animationIds.Guard
 guardModule["energyCost"] = 10
+guardModule["animationTrack"] = nil
 
-function guardModule.playAnimation(player)
-	local humanoid = player.Character:WaitForChild("Humanoid")
+function guardModule.loadAnimations(player)
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoid = character:WaitForChild("Humanoid")
 	local animator = humanoid:WaitForChild("Animator")
 	
-	local abilityAnimation = Instance.new("Animation")
-	abilityAnimation.AnimationId = guardModule.animationId
-	local animationTrack = animator:LoadAnimation(abilityAnimation)
-	animationTrack:Play()
+	local animation = Instance.new("Animation")
+	animation.AnimationId = guardModule.animationId
+	local animationTrack = animator:LoadAnimation(animation)
+	
+	guardModule["animationTrack"] = animationTrack
+end
+
+function guardModule.playAnimation(player)
+	if not guardModule["animationTrack"]  then
+		guardModule.loadAnimations(player)
+	end
+	
+	guardModule["animationTrack"]:Play()
+end
+
+function guardModule.stopAnimation(player)
+	if not guardModule["animationTrack"]  then
+		guardModule.loadAnimations(player)
+	end
+	
+	guardModule["animationTrack"]:Stop()
 end
 
 function guardModule.usable(player)
