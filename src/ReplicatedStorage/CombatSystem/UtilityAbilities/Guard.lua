@@ -48,6 +48,7 @@ end
 function guardModule.executeClient(player)
 	if not player  then	return end
 	PlayerDataModule.SetPlayerState(player, "inAction", true)
+	PlayerDataModule.SetPlayerStatistic(player, PlayerDataModule.DEFENSE_KEY_NAME, 0.9)
 end
 
 function guardModule.stopClient(player)
@@ -62,23 +63,22 @@ function guardModule.execute(player)
 	humanoid.JumpHeight = 0
 
 	PlayerDataModule.SetPlayerState(player, "inAction", true)
-	PlayerDataModule.SetPlayerStatistic(player, "defensive", 0.9)
-	print(PlayerDataModule.GetPlayerStatistic(player, "defensive"))
+	PlayerDataModule.SetPlayerStatistic(player, PlayerDataModule.DEFENSE_KEY_NAME, 0.9)
 end
 
 function guardModule.stop(player)
 	local humanoid = player.Character:WaitForChild("Humanoid")
 
 	if PlayerDataModule.GetPlayerState(player, "inSprint") then
-		humanoid.WalkSpeed = 30 + PlayerDataModule.GetPlayerStatistic(player, "speed")
-		humanoid.JumpHeight = 20 + PlayerDataModule.GetPlayerStatistic(player, "speed")
+		humanoid.WalkSpeed = 30 + PlayerDataModule.GetPlayerStatistic(player, PlayerDataModule.SPEED_KEY_NAME)
+		humanoid.JumpHeight = 20 + PlayerDataModule.GetPlayerStatistic(player, PlayerDataModule.SPEED_KEY_NAME)
 	else 
-		humanoid.WalkSpeed = 10 + (PlayerDataModule.GetPlayerStatistic(player, "speed")/2)
-		humanoid.JumpHeight = 10 + PlayerDataModule.GetPlayerStatistic(player, "speed")
+		humanoid.WalkSpeed = 10 + (PlayerDataModule.GetPlayerStatistic(player, PlayerDataModule.SPEED_KEY_NAME)/2)
+		humanoid.JumpHeight = 10 + PlayerDataModule.GetPlayerStatistic(player, PlayerDataModule.SPEED_KEY_NAME)
 	end
 
 	PlayerDataModule.SetPlayerState(player, "inAction", false)
-	PlayerDataModule.SetPlayerStatistic(player, "defensive", 0)
+	PlayerDataModule.SetPlayerStatistic(player, PlayerDataModule.DEFENSE_KEY_NAME, 0)
 end
 
 return guardModule

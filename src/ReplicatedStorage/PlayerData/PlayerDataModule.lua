@@ -69,7 +69,8 @@ function PlayerDataModule.TogglePlayerState(player, stateName)
 end
 
 function PlayerDataModule.DealPhysicalDamage(player, damage)
-	local defense = PlayerDataModule.GetPlayerState(player, "defense")
+	local defense = PlayerDataModule.GetPlayerStatistic(player, "defense")
+	print("defense: " .. defense)
 	local humanoid = player.Character:WaitForChild("Humanoid")
 
 	humanoid.Health -= damage - (damage * defense)

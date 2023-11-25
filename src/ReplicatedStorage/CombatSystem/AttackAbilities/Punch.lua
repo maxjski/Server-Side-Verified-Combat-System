@@ -2,7 +2,7 @@ local PunchModule = {}
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-local PlayersDataModule = require(ReplicatedStorage.PlayerData.PlayerDataModule)
+local PlayerDataModule = require(ReplicatedStorage.PlayerData.PlayerDataModule)
 local animationIds = require(ReplicatedStorage.PlayerData.AnimationIDs)
 
 PunchModule["id"] = "punch"
@@ -19,7 +19,7 @@ PunchModule["punchCounter"] = 1
 PunchModule["animationTracks"] = nil
 
 local function getDmg(player)
-	return 20 + PlayersDataModule.GetPlayerStatistic(player, "strength")
+	return 20 + PlayerDataModule.GetPlayerStatistic(player, "strength")
 end	
 
 function PunchModule.loadAnimations(player)
@@ -53,13 +53,14 @@ function PunchModule.playAnimation(player)
 end
 
 function PunchModule.usable(player)
-	local inAction = PlayersDataModule.GetPlayerState(player, "inAction")
+	print(PlayerDataModule.GetPlayerStatistic(player, PlayerDataModule.DEFENSE_KEY_NAME))
+	local inAction = PlayerDataModule.GetPlayerState(player, "inAction")
 	if inAction then
 		return false
 	end
 
-	if PlayersDataModule.IsCooldownComplete(player, PunchModule["id"]) and not PlayersDataModule.GetPlayerState(player, "inAction") then
-		PlayersDataModule.StartCooldown(player, PunchModule.id, PunchModule.cooldown)
+	if PlayerDataModule.IsCooldownComplete(player, PunchModule["id"]) and not PlayerDataModule.GetPlayerState(player, "inAction") then
+		PlayerDataModule.StartCooldown(player, PunchModule.id, PunchModule.cooldown)
 		return true
 	end
 
@@ -90,16 +91,16 @@ end
 function PunchModule.executeClient(player)
 	if not player then return end
 
-	PlayersDataModule.SetPlayerState(player, "inAction", true)
+	PlayerDataModule.SetPlayerState(player, "inAction", true)
 	
 	wait(PunchModule["cooldown"])
-	PlayersDataModule.SetPlayerState(player, "inAction", false)
+	PlayerDataModule.SetPlayerState(player, "inAction", false)
 end
 
 function PunchModule.execute(player)
 	if not player then return end
 
-	PlayersDataModule.SetPlayerState(player, "inAction", true)
+	PlayerDataModule.SetPlayerState(player, "inAction", true)
 	
 	local hitHumanoid = PunchModule.getHitHumanoid(player)
 	
@@ -108,9 +109,9 @@ function PunchModule.execute(player)
 		local hitPlayer = Players:GetPlayerFromCharacter(character)
 		if hitPlayer then
 			print("HIT PLAYER")
-			PlayersDataModule.DealPhysicalDamage(hitPlayer, getDmg(player))
+			PlayerDataModule.DealPhysicalDamage(hitPlayer, getDmg(player))
 		else
-			print("HIT PLAYER")
+			print("HIT NPC")
 			local EnemyModule = require(character.EnemyModule)
 			EnemyModule.DealPhysicalDamage(hitHumanoid, getDmg(player))
 		end
@@ -118,7 +119,7 @@ function PunchModule.execute(player)
 	
 	task.spawn(function()
 		task.wait(0.5)
-		PlayersDataModule.SetPlayerState(player, "inAction", false)
+		PlayerDataModule.SetPlayerState(player, "inAction", false)
 	end)
 end
 
