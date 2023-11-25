@@ -39,14 +39,16 @@ local function onInputBegan(input, gameProcessed)
 	if gameProcessed then return end
 
 	local abilityModule = keyToAbility[input.KeyCode] or keyToAbility[input.UserInputType]
-	if not abilityModule or not abilityModule.usable(LocalPlayer) then return end
-	
-	if abilityModule.playAnimation then
-		abilityModule.playAnimation(LocalPlayer)
+
+	if not abilityModule then 
+		return 
 	end
 
-	if ValidateAbilityAction:InvokeServer(abilityModule.id) then
-		return
+	local usable = abilityModule.usable(LocalPlayer)
+	if usable and abilityModule.playAnimation then
+		abilityModule.playAnimation(LocalPlayer)
+		abilityModule.execute(LocalPlayer)
+		ValidateAbilityAction:InvokeServer(abilityModule.id)
 	end
 end
 
@@ -54,9 +56,10 @@ local function onInputEnded(input, gameProcessed)
 	if gameProcessed then return end
 
 	local abilityModule = keyToStopAbility[input.KeyCode] or keyToStopAbility[input.UserInputType]
-	if not abilityModule or not abilityModule.usable(LocalPlayer) then return end
+	if not abilityModule or not abilityModule.stopable(LocalPlayer) then return end
 
 	if abilityModule.stopAnimation then
+		abilityModule.stop(LocalPlayer)
 		abilityModule.stopAnimation(LocalPlayer)
 	end
 

@@ -27,13 +27,14 @@ end
 function dashModule.usable(player)
 	if PlayerActionsModule.IsCooldownComplete(player, dashModule.id) then
 		PlayerActionsModule.StartCooldown(player, dashModule.id, dashModule.cooldown)
-		return true
+		return PlayerActionsModule.GetPlayerState(player, "inAction") == false
 	end
 	
 	return false
 end
 
 function dashModule.execute(player)
+    PlayerActionsModule.SetPlayerState(player, "inAction", true)
 	local root = player.Character:FindFirstChild("HumanoidRootPart")
 
     local i = Instance.new('BodyPosition')
@@ -43,7 +44,8 @@ function dashModule.execute(player)
     i.Position = (root.CFrame*CFrame.new(0, 0, -30)).Position --get 20 units in front of the player
     i.Parent = root
     task.spawn(function()
-        task.wait(0.3) --however long you want the dash to last
+        task.wait(0.3)
+        PlayerActionsModule.SetPlayerState(player, "inAction", false)
         i:Destroy()
     end)
 end

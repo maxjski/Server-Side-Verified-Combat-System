@@ -18,18 +18,7 @@ local function getSpeedAndJump(player, isSprinting)
 	end
 end
 
-function CEAccelerationModule.usable(player)
-	if PlayerActionsModule.IsCooldownComplete(player, CEAccelerationModule["id"]) then
-		PlayerActionsModule.StartCooldown(player, CEAccelerationModule.id, CEAccelerationModule.cooldown)
-		return true
-	end
-	
-	return false
-end
-
-function CEAccelerationModule.execute(player)
-	if not player  then	return end
-	
+function CEAccelerationModule.playAnimation(player)
 	local humanoid = player.Character:WaitForChild("Humanoid")
 	local animator = humanoid:WaitForChild("Animator")
 	
@@ -37,17 +26,33 @@ function CEAccelerationModule.execute(player)
 	abilityAnimation.AnimationId = CEAccelerationModule.animationId
 	local animationTrack = animator:LoadAnimation(abilityAnimation)
 	animationTrack:Play()
+end
+
+function CEAccelerationModule.usable(player)
+	if PlayerActionsModule.IsCooldownComplete(player, CEAccelerationModule["id"]) then
+		PlayerActionsModule.StartCooldown(player, CEAccelerationModule.id, CEAccelerationModule.cooldown)
+		return PlayerActionsModule.GetPlayerState(player, "inAction") == false
+	end
+	
+	return false
+end
+
+function CEAccelerationModule.execute(player)
+	if not player  then	return end
+    PlayerActionsModule.SetPlayerState(player, "inAction", true)
+	
+	local humanoid = player.Character:WaitForChild("Humanoid")
 	
 	humanoid.WalkSpeed = 0
 	humanoid.JumpHeight = 0
 
-	wait(0.5)
-
-	PlayerActionsModule.TogglePlayerState(player, "inSprint")
-	local isSprinting = PlayerActionsModule.GetPlayerState(player, "inSprint")
-	
-	print("isSprinting: ", isSprinting)
-	humanoid.WalkSpeed, humanoid.JumpHeight = getSpeedAndJump(player, isSprinting)
+	task.spawn(function()
+		task.wait(0.5)
+		PlayerActionsModule.SetPlayerState(player, "inAction", false)
+		PlayerActionsModule.TogglePlayerState(player, "inSprint")
+		local isSprinting = PlayerActionsModule.GetPlayerState(player, "inSprint")
+		humanoid.WalkSpeed, humanoid.JumpHeight = getSpeedAndJump(player, isSprinting)
+	end)
 end
 
 return CEAccelerationModule

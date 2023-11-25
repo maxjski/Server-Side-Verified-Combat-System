@@ -54,6 +54,14 @@ function PunchModule.playAnimation(player)
 end
 
 function PunchModule.usable(player)
+	local inAction = PlayerActionsModule.GetPlayerState(player, "inAction")
+	if inAction then
+		print("USABLE IS FALSE")
+		return false
+	end
+	print("USABLE IS TRUE")
+	print(PlayerActionsModule.GetPlayerState(player, "inAction"))
+
 	if PlayerActionsModule.IsCooldownComplete(player, PunchModule["id"]) and not PlayerActionsModule.GetPlayerState(player, "inAction") then
 		PlayerActionsModule.StartCooldown(player, PunchModule.id, PunchModule.cooldown)
 		return true

@@ -39,7 +39,7 @@ function guardModule.stopAnimation(player)
 end
 
 function guardModule.usable(player)
-	return true
+	return PlayerActionsModule.GetPlayerState(player, "inAction") == false
 end
 
 function guardModule.stopable(player)
@@ -52,10 +52,12 @@ function guardModule.execute(player)
 	humanoid.WalkSpeed = 0
 	humanoid.JumpHeight = 0
 
+	PlayerActionsModule.SetPlayerState(player, "inAction", true)
 	PlayerStatisticsModule.SetPlayerState(player, "defensive", 0.9)
 end
 
 function guardModule.stop(player)
+	print("STOPPING")
 	local humanoid = player.Character:WaitForChild("Humanoid")
 
 	if PlayerActionsModule.GetPlayerState(player, "inSprint") then
@@ -66,6 +68,7 @@ function guardModule.stop(player)
 		humanoid.JumpHeight = 10 + PlayerStatisticsModule.GetPlayerState(player, "speed")
 	end
 
+	PlayerActionsModule.SetPlayerState(player, "inAction", false)
 	PlayerStatisticsModule.SetPlayerState(player, "defensive", 0)
 end
 
