@@ -54,6 +54,7 @@ end
 function guardModule.stopClient(player)
 	if not player  then	return end
 	PlayerDataModule.SetPlayerState(player, "inAction", false)
+	PlayerDataModule.SetPlayerStatistic(player, PlayerDataModule.DEFENSE_KEY_NAME, 0)
 end
 
 function guardModule.execute(player)
