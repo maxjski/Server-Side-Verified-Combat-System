@@ -1,8 +1,7 @@
 local CEAccelerationModule = {}
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local PlayerStatisticsModule = require(ReplicatedStorage.PlayerData.PlayerStatistics)
-local PlayerActionsModule = require(ReplicatedStorage.PlayerData.PlayerActionsModule)
+local PlayerDataModule = require(ReplicatedStorage.PlayerData.PlayerDataModule)
 local animationIds = require(ReplicatedStorage.PlayerData.AnimationIDs)
 
 CEAccelerationModule["id"] = "ceacceleration"
@@ -12,9 +11,9 @@ CEAccelerationModule["cooldown"] = 1
 
 local function getSpeedAndJump(player, isSprinting)
 	if isSprinting then
-		return 30 + PlayerStatisticsModule.GetPlayerState(player, "speed"), 20 + PlayerStatisticsModule.GetPlayerState(player, "speed")
+		return 30 + PlayerDataModule.GetPlayerStatistic(player, "speed"), 20 + PlayerDataModule.GetPlayerStatistic(player, "speed")
 	else
-		return 10 + (PlayerStatisticsModule.GetPlayerState(player, "speed")/2), 10 + PlayerStatisticsModule.GetPlayerState(player, "speed")
+		return 10 + (PlayerDataModule.GetPlayerStatistic(player, "speed")/2), 10 + PlayerDataModule.GetPlayerStatistic(player, "speed")
 	end
 end
 
@@ -29,9 +28,9 @@ function CEAccelerationModule.playAnimation(player)
 end
 
 function CEAccelerationModule.usable(player)
-	if PlayerActionsModule.IsCooldownComplete(player, CEAccelerationModule["id"]) then
-		PlayerActionsModule.StartCooldown(player, CEAccelerationModule.id, CEAccelerationModule.cooldown)
-		return PlayerActionsModule.GetPlayerState(player, "inAction") == false
+	if PlayerDataModule.IsCooldownComplete(player, CEAccelerationModule["id"]) then
+		PlayerDataModule.StartCooldown(player, CEAccelerationModule.id, CEAccelerationModule.cooldown)
+		return PlayerDataModule.GetPlayerState(player, "inAction") == false
 	end
 	
 	return false
@@ -39,18 +38,18 @@ end
 
 function CEAccelerationModule.executeClient(player)
 	if not player  then	return end
-    PlayerActionsModule.SetPlayerState(player, "inAction", true)
+    PlayerDataModule.SetPlayerState(player, "inAction", true)
 
 	task.spawn(function()
 		task.wait(0.5)
-		PlayerActionsModule.SetPlayerState(player, "inAction", false)
-		PlayerActionsModule.TogglePlayerState(player, "inSprint")
+		PlayerDataModule.SetPlayerState(player, "inAction", false)
+		PlayerDataModule.TogglePlayerState(player, "inSprint")
 	end)
 end
 
 function CEAccelerationModule.execute(player)
 	if not player  then	return end
-    PlayerActionsModule.SetPlayerState(player, "inAction", true)
+    PlayerDataModule.SetPlayerState(player, "inAction", true)
 	
 	local humanoid = player.Character:WaitForChild("Humanoid")
 	
@@ -59,9 +58,9 @@ function CEAccelerationModule.execute(player)
 
 	task.spawn(function()
 		task.wait(0.5)
-		PlayerActionsModule.SetPlayerState(player, "inAction", false)
-		PlayerActionsModule.TogglePlayerState(player, "inSprint")
-		local isSprinting = PlayerActionsModule.GetPlayerState(player, "inSprint")
+		PlayerDataModule.SetPlayerState(player, "inAction", false)
+		PlayerDataModule.TogglePlayerState(player, "inSprint")
+		local isSprinting = PlayerDataModule.GetPlayerState(player, "inSprint")
 		humanoid.WalkSpeed, humanoid.JumpHeight = getSpeedAndJump(player, isSprinting)
 	end)
 end

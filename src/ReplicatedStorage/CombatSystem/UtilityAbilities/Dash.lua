@@ -1,7 +1,7 @@
 local dashModule = {}
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local PlayerActionsModule = require(ReplicatedStorage.PlayerData.PlayerActionsModule)
+local PlayerDataModule = require(ReplicatedStorage.PlayerData.PlayerDataModule)
 local animationIds = require(ReplicatedStorage.PlayerData.AnimationIDs)
 
 dashModule["id"] = "dash"
@@ -20,9 +20,9 @@ function dashModule.playAnimation(player)
 end
 
 function dashModule.usable(player)
-	if PlayerActionsModule.IsCooldownComplete(player, dashModule.id) then
-		PlayerActionsModule.StartCooldown(player, dashModule.id, dashModule.cooldown)
-		return PlayerActionsModule.GetPlayerState(player, "inAction") == false
+	if PlayerDataModule.IsCooldownComplete(player, dashModule.id) then
+		PlayerDataModule.StartCooldown(player, dashModule.id, dashModule.cooldown)
+		return PlayerDataModule.GetPlayerState(player, "inAction") == false
 	end
 	
 	return false
@@ -30,16 +30,16 @@ end
 
 function dashModule.executeClien(player)
     if not player  then	return end
-    PlayerActionsModule.SetPlayerState(player, "inAction", true)
+    PlayerDataModule.SetPlayerState(player, "inAction", true)
 
     task.spawn(function()
         task.wait(dashModule["cooldown"])
-        PlayerActionsModule.SetPlayerState(player, "inAction", false)
+        PlayerDataModule.SetPlayerState(player, "inAction", false)
     end)
 end
 
 function dashModule.execute(player)
-    PlayerActionsModule.SetPlayerState(player, "inAction", true)
+    PlayerDataModule.SetPlayerState(player, "inAction", true)
 	local root = player.Character:FindFirstChild("HumanoidRootPart")
 
     local i = Instance.new('BodyPosition')
@@ -50,7 +50,7 @@ function dashModule.execute(player)
     i.Parent = root
     task.spawn(function()
         task.wait(dashModule["cooldown"])
-        PlayerActionsModule.SetPlayerState(player, "inAction", false)
+        PlayerDataModule.SetPlayerState(player, "inAction", false)
         i:Destroy()
     end)
 end

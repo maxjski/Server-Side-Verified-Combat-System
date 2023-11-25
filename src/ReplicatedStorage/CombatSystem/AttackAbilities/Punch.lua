@@ -2,8 +2,7 @@ local PunchModule = {}
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-local PlayerStatisticsModule = require(ReplicatedStorage.PlayerData.PlayerStatistics)
-local PlayerActionsModule = require(ReplicatedStorage.PlayerData.PlayerActionsModule)
+local PlayersDataModule = require(ReplicatedStorage.PlayerData.PlayerDataModule)
 local animationIds = require(ReplicatedStorage.PlayerData.AnimationIDs)
 
 PunchModule["id"] = "punch"
@@ -20,7 +19,7 @@ PunchModule["punchCounter"] = 1
 PunchModule["animationTracks"] = nil
 
 local function getDmg(player)
-	return 20 + PlayerStatisticsModule.GetPlayerState(player, "strength")
+	return 20 + PlayersDataModule.GetPlayerStatistic(player, "strength")
 end	
 
 function PunchModule.loadAnimations(player)
@@ -54,16 +53,13 @@ function PunchModule.playAnimation(player)
 end
 
 function PunchModule.usable(player)
-	local inAction = PlayerActionsModule.GetPlayerState(player, "inAction")
+	local inAction = PlayersDataModule.GetPlayerState(player, "inAction")
 	if inAction then
-		print("USABLE IS FALSE")
 		return false
 	end
-	print("USABLE IS TRUE")
-	print(PlayerActionsModule.GetPlayerState(player, "inAction"))
 
-	if PlayerActionsModule.IsCooldownComplete(player, PunchModule["id"]) and not PlayerActionsModule.GetPlayerState(player, "inAction") then
-		PlayerActionsModule.StartCooldown(player, PunchModule.id, PunchModule.cooldown)
+	if PlayersDataModule.IsCooldownComplete(player, PunchModule["id"]) and not PlayersDataModule.GetPlayerState(player, "inAction") then
+		PlayersDataModule.StartCooldown(player, PunchModule.id, PunchModule.cooldown)
 		return true
 	end
 
@@ -77,15 +73,6 @@ function PunchModule.getHitHumanoid(player)
 	local rayOrigin = character.HumanoidRootPart.CFrame.Position + rayDirection
 
 	local raycastResult = workspace:Raycast(rayOrigin, rayDirection * 3)
-
-	-- Create a thin box to visualize the ray
-	local rayVisualization = Instance.new("Part")
-	rayVisualization.Size = Vector3.new(0.2, 0.2, (rayDirection * 3).Magnitude) -- Thin and stretched
-	rayVisualization.CFrame = CFrame.new(rayOrigin + rayDirection * 1.5, rayOrigin) -- Positioned in the middle of the ray
-	rayVisualization.Anchored = true
-	rayVisualization.CanCollide = false
-	rayVisualization.Color = Color3.new(1, 0, 0) -- Red color for visibility
-	rayVisualization.Parent = workspace
 	
 	if raycastResult then
 		local hit = raycastResult.Instance
@@ -103,28 +90,27 @@ end
 function PunchModule.executeClient(player)
 	if not player then return end
 
-	PlayerActionsModule.SetPlayerState(player, "inAction", true)
+	PlayersDataModule.SetPlayerState(player, "inAction", true)
 	
 	wait(PunchModule["cooldown"])
-	PlayerActionsModule.SetPlayerState(player, "inAction", false)
+	PlayersDataModule.SetPlayerState(player, "inAction", false)
 end
 
 function PunchModule.execute(player)
 	if not player then return end
 
-	PlayerActionsModule.SetPlayerState(player, "inAction", true)
+	PlayersDataModule.SetPlayerState(player, "inAction", true)
 	
 	local hitHumanoid = PunchModule.getHitHumanoid(player)
 	
-	-- check if hitHumanoid is a player
-
 	if hitHumanoid and hitHumanoid:IsA("Humanoid") then
 		local character = hitHumanoid.Parent
 		local hitPlayer = Players:GetPlayerFromCharacter(character)
 		if hitPlayer then
-			PlayerStatisticsModule.DealPhysicalDamage(hitPlayer, getDmg(player))
+			print("HIT PLAYER")
+			PlayersDataModule.DealPhysicalDamage(hitPlayer, getDmg(player))
 		else
-			print("NPC HIT")
+			print("HIT PLAYER")
 			local EnemyModule = require(character.EnemyModule)
 			EnemyModule.DealPhysicalDamage(hitHumanoid, getDmg(player))
 		end
@@ -132,7 +118,7 @@ function PunchModule.execute(player)
 	
 	task.spawn(function()
 		task.wait(0.5)
-		PlayerActionsModule.SetPlayerState(player, "inAction", false)
+		PlayersDataModule.SetPlayerState(player, "inAction", false)
 	end)
 end
 

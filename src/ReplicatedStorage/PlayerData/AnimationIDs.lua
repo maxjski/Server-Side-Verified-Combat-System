@@ -22,7 +22,7 @@ animationIds["Idle"] = "rbxassetid://15395680092"
 animationIds["Walk"] = "rbxassetid://15401309837"
 -- This is the basic walk anim
 
-animationIds["FDash"] = "rbxassetid://15396268116"
+animationIds["FDash"] = "rbxassetid://15461374387"
 -- this is the basic front dash
 
 animationIds["RDash"] = "rbxassetid://15396354051"
@@ -34,7 +34,7 @@ animationIds["LDash"] = "rbxassetid://15396440480"
 animationIds["DESukuna"] = "rbxassetid://15401524803"
 -- Domain Expansion animation for Sukuna
 
-animationIds["Run"] = "rbxassetid://15403978962"
+animationIds["Run"] = "rbxassetid://15462278073"
 -- This is the basic run anim
 
 animationIds["Guard"] = "rbxassetid://15404481198"

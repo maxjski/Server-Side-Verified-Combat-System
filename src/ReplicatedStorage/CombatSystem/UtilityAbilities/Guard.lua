@@ -1,8 +1,7 @@
 local guardModule = {}
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local PlayerStatisticsModule = require(ReplicatedStorage.PlayerData.PlayerStatistics)
-local PlayerActionsModule = require(ReplicatedStorage.PlayerData.PlayerActionsModule)
+local PlayerDataModule = require(ReplicatedStorage.PlayerData.PlayerDataModule)
 local animationIds = require(ReplicatedStorage.PlayerData.AnimationIDs)
 
 guardModule["id"] = "guard"
@@ -39,7 +38,7 @@ function guardModule.stopAnimation(player)
 end
 
 function guardModule.usable(player)
-	return PlayerActionsModule.GetPlayerState(player, "inAction") == false
+	return PlayerDataModule.GetPlayerState(player, "inAction") == false
 end
 
 function guardModule.stopable(player)
@@ -48,12 +47,12 @@ end
 
 function guardModule.executeClient(player)
 	if not player  then	return end
-	PlayerActionsModule.SetPlayerState(player, "inAction", true)
+	PlayerDataModule.SetPlayerState(player, "inAction", true)
 end
 
 function guardModule.stopClient(player)
 	if not player  then	return end
-	PlayerActionsModule.SetPlayerState(player, "inAction", false)
+	PlayerDataModule.SetPlayerState(player, "inAction", false)
 end
 
 function guardModule.execute(player)
@@ -62,23 +61,24 @@ function guardModule.execute(player)
 	humanoid.WalkSpeed = 0
 	humanoid.JumpHeight = 0
 
-	PlayerActionsModule.SetPlayerState(player, "inAction", true)
-	PlayerStatisticsModule.SetPlayerState(player, "defensive", 0.9)
+	PlayerDataModule.SetPlayerState(player, "inAction", true)
+	PlayerDataModule.SetPlayerStatistic(player, "defensive", 0.9)
+	print(PlayerDataModule.GetPlayerStatistic(player, "defensive"))
 end
 
 function guardModule.stop(player)
 	local humanoid = player.Character:WaitForChild("Humanoid")
 
-	if PlayerActionsModule.GetPlayerState(player, "inSprint") then
-		humanoid.WalkSpeed = 30 + PlayerStatisticsModule.GetPlayerState(player, "speed")
-		humanoid.JumpHeight = 20 + PlayerStatisticsModule.GetPlayerState(player, "speed")
+	if PlayerDataModule.GetPlayerState(player, "inSprint") then
+		humanoid.WalkSpeed = 30 + PlayerDataModule.GetPlayerStatistic(player, "speed")
+		humanoid.JumpHeight = 20 + PlayerDataModule.GetPlayerStatistic(player, "speed")
 	else 
-		humanoid.WalkSpeed = 10 + (PlayerStatisticsModule.GetPlayerState(player, "speed")/2)
-		humanoid.JumpHeight = 10 + PlayerStatisticsModule.GetPlayerState(player, "speed")
+		humanoid.WalkSpeed = 10 + (PlayerDataModule.GetPlayerStatistic(player, "speed")/2)
+		humanoid.JumpHeight = 10 + PlayerDataModule.GetPlayerStatistic(player, "speed")
 	end
 
-	PlayerActionsModule.SetPlayerState(player, "inAction", false)
-	PlayerStatisticsModule.SetPlayerState(player, "defensive", 0)
+	PlayerDataModule.SetPlayerState(player, "inAction", false)
+	PlayerDataModule.SetPlayerStatistic(player, "defensive", 0)
 end
 
 return guardModule
