@@ -46,9 +46,11 @@ local function onInputBegan(input, gameProcessed)
 
 	local usable = abilityModule.usable(LocalPlayer)
 	if usable and abilityModule.playAnimation then
-		abilityModule.playAnimation(LocalPlayer)
-		abilityModule.execute(LocalPlayer)
 		ValidateAbilityAction:InvokeServer(abilityModule.id)
+		abilityModule.playAnimation(LocalPlayer)
+		if abilityModule.executeClient then
+			abilityModule.executeClient(LocalPlayer)
+		end
 	end
 end
 
@@ -59,8 +61,10 @@ local function onInputEnded(input, gameProcessed)
 	if not abilityModule or not abilityModule.stopable(LocalPlayer) then return end
 
 	if abilityModule.stopAnimation then
-		abilityModule.stop(LocalPlayer)
 		abilityModule.stopAnimation(LocalPlayer)
+		if abilityModule.stopClient then
+			abilityModule.stopClient(LocalPlayer)
+		end
 	end
 
 	if ValidateStopAbilityAction:InvokeServer(abilityModule.id) then

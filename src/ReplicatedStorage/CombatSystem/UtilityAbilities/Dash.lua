@@ -6,11 +6,6 @@ local animationIds = require(ReplicatedStorage.PlayerData.AnimationIDs)
 
 dashModule["id"] = "dash"
 dashModule["animationId"] = animationIds.FDash
-dashModule["animationIds"] = {
-	animationIds.FDash,
-	animationIds.LDash,
-	animationIds.RDash
-}
 dashModule["energyCost"] = 10
 dashModule["cooldown"] = 0.5
 
@@ -33,6 +28,16 @@ function dashModule.usable(player)
 	return false
 end
 
+function dashModule.executeClien(player)
+    if not player  then	return end
+    PlayerActionsModule.SetPlayerState(player, "inAction", true)
+
+    task.spawn(function()
+        task.wait(dashModule["cooldown"])
+        PlayerActionsModule.SetPlayerState(player, "inAction", false)
+    end)
+end
+
 function dashModule.execute(player)
     PlayerActionsModule.SetPlayerState(player, "inAction", true)
 	local root = player.Character:FindFirstChild("HumanoidRootPart")
@@ -44,7 +49,7 @@ function dashModule.execute(player)
     i.Position = (root.CFrame*CFrame.new(0, 0, -30)).Position --get 20 units in front of the player
     i.Parent = root
     task.spawn(function()
-        task.wait(0.3)
+        task.wait(dashModule["cooldown"])
         PlayerActionsModule.SetPlayerState(player, "inAction", false)
         i:Destroy()
     end)

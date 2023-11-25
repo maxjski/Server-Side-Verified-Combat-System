@@ -46,6 +46,16 @@ function guardModule.stopable(player)
 	return true
 end
 
+function guardModule.executeClient(player)
+	if not player  then	return end
+	PlayerActionsModule.SetPlayerState(player, "inAction", true)
+end
+
+function guardModule.stopClient(player)
+	if not player  then	return end
+	PlayerActionsModule.SetPlayerState(player, "inAction", false)
+end
+
 function guardModule.execute(player)
 	local humanoid = player.Character:WaitForChild("Humanoid")
 	
@@ -57,7 +67,6 @@ function guardModule.execute(player)
 end
 
 function guardModule.stop(player)
-	print("STOPPING")
 	local humanoid = player.Character:WaitForChild("Humanoid")
 
 	if PlayerActionsModule.GetPlayerState(player, "inSprint") then

@@ -37,6 +37,17 @@ function CEAccelerationModule.usable(player)
 	return false
 end
 
+function CEAccelerationModule.executeClient(player)
+	if not player  then	return end
+    PlayerActionsModule.SetPlayerState(player, "inAction", true)
+
+	task.spawn(function()
+		task.wait(0.5)
+		PlayerActionsModule.SetPlayerState(player, "inAction", false)
+		PlayerActionsModule.TogglePlayerState(player, "inSprint")
+	end)
+end
+
 function CEAccelerationModule.execute(player)
 	if not player  then	return end
     PlayerActionsModule.SetPlayerState(player, "inAction", true)

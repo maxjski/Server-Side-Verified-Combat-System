@@ -100,6 +100,15 @@ function PunchModule.getHitHumanoid(player)
 	return nil
 end
 
+function PunchModule.executeClient(player)
+	if not player then return end
+
+	PlayerActionsModule.SetPlayerState(player, "inAction", true)
+	
+	wait(PunchModule["cooldown"])
+	PlayerActionsModule.SetPlayerState(player, "inAction", false)
+end
+
 function PunchModule.execute(player)
 	if not player then return end
 
@@ -107,19 +116,24 @@ function PunchModule.execute(player)
 	
 	local hitHumanoid = PunchModule.getHitHumanoid(player)
 	
-	if not hitHumanoid or not hitHumanoid:IsA("Humanoid") then
-		wait(PunchModule["cooldown"])
-		PlayerActionsModule.SetPlayerState(player, "inAction", false)
-		return
-	end
+	-- check if hitHumanoid is a player
 
-	local character = hitHumanoid.Parent
-	local hitPlayer = Players:GetPlayerFromCharacter(character)
+	if hitHumanoid and hitHumanoid:IsA("Humanoid") then
+		local character = hitHumanoid.Parent
+		local hitPlayer = Players:GetPlayerFromCharacter(character)
+		if hitPlayer then
+			PlayerStatisticsModule.DealPhysicalDamage(hitPlayer, getDmg(player))
+		else
+			print("NPC HIT")
+			local EnemyModule = require(character.EnemyModule)
+			EnemyModule.DealPhysicalDamage(hitHumanoid, getDmg(player))
+		end
+	end
 	
-	PlayerStatisticsModule.DealPhysicalDamage(hitPlayer, hitHumanoid, getDmg(player))
-	
-	wait(PunchModule["cooldown"])
-	PlayerActionsModule.SetPlayerState(player, "inAction", false)
+	task.spawn(function()
+		task.wait(0.5)
+		PlayerActionsModule.SetPlayerState(player, "inAction", false)
+	end)
 end
 
 return PunchModule
