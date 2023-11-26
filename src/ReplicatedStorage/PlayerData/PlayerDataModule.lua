@@ -38,10 +38,24 @@ local DEFAULT_PLAYER_DATA = {
 	}
 }
 
+local function cloneTable(table)
+    local copy = {}
+    for key, value in pairs(table) do
+        if type(value) == "table" then
+            copy[key] = cloneTable(value)
+        else
+            copy[key] = value
+        end
+    end
+    return copy
+end
+
 local function getData(player)
-	local data = playerData[tostring(player.UserId)] or DEFAULT_PLAYER_DATA
-	playerData[tostring(player.UserId)] = data
-	return data
+    local userId = tostring(player.UserId)
+    if not playerData[userId] then
+        playerData[userId] = cloneTable(DEFAULT_PLAYER_DATA)
+    end
+    return playerData[userId]
 end
 
 function PlayerDataModule.GetPlayerStatistic(player, key)

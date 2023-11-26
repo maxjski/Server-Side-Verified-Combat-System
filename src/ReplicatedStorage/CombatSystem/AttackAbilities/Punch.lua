@@ -80,11 +80,13 @@ function PunchModule.getHitHumanoid(player)
 		if hit and hit:IsDescendantOf(workspace) then
 			local hitHumanoid = hit.Parent:FindFirstChildWhichIsA("Humanoid")
 			if hitHumanoid and hitHumanoid ~= character:FindFirstChildWhichIsA("Humanoid") then
+				print("HIT PLAYER")
 				return hitHumanoid
 			end
 		end
 	end
 	
+	print("NO HIT")
 	return nil
 end
 
@@ -98,17 +100,18 @@ function PunchModule.executeClient(player)
 end
 
 function PunchModule.execute(player)
+	print("PUNCH")
 	if not player then return end
 
 	PlayerDataModule.SetPlayerState(player, "inAction", true)
 	
 	local hitHumanoid = PunchModule.getHitHumanoid(player)
+	print("HIT HUMANOID: " .. tostring(hitHumanoid))
 	
 	if hitHumanoid and hitHumanoid:IsA("Humanoid") then
 		local character = hitHumanoid.Parent
 		local hitPlayer = Players:GetPlayerFromCharacter(character)
 		if hitPlayer then
-			print("HIT PLAYER")
 			PlayerDataModule.DealPhysicalDamage(hitPlayer, getDmg(player))
 		else
 			print("HIT NPC")
