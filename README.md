@@ -13,7 +13,7 @@ This project uses Rojo to bridge the gap between the Roblox platform and Visual 
    - Search for 'Rojo' in the plugin marketplace and install it.
 
 2. **Clone the Repository**:
-   - Clone this repository to your local machine using `git clone [repository URL]`.
+   - Clone this repository to your local machine.
 
 3. **Open the Project in Visual Studio Code**:
    - Open the cloned project directory in Visual Studio Code.
@@ -33,4 +33,4 @@ This project uses Rojo to bridge the gap between the Roblox platform and Visual 
 - Test and debug your game in Roblox Studio as usual.
 
 ## License
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the MIT License.
